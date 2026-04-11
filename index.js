@@ -1,7 +1,10 @@
 const express = require("express");
 const path = require("path");
+
 const app = express();
 const PORT = 8080;
+const cors = require('cors');
+app.use(cors());
 app.use(express.json());
 let notes = [];
 

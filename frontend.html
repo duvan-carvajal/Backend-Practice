@@ -1,0 +1,54 @@
+<h1>Notes App</h1>
+<input id="noteInput" placeholder="write a note">
+<button onClick="addNote()">Add</button>
+<ul id="notesList"></ul>
+
+<script>
+    
+
+    async function getNotes() {
+        const res = await fetch("http://localhost:8080/notes");
+        const data = await res.json();
+        
+
+        const list = document.getElementById("notesList");
+        list.innerHTML = "";
+        data.forEach(note =>{
+            const li = document.createElement("li");
+            li.innerText = `${note.id}: ${note.text}`;
+             const btn = document.createElement("button");
+        btn.innerText = "borrar nota";
+        btn.onclick = () => deleteNote(note.id);
+        li.appendChild(btn);
+        list.appendChild(li);
+        })
+
+       
+
+        
+        if (data.length === 0){
+        list.innerHTML = ("No notes so far");
+    }
+    }
+    async function addNote(){
+        const input = document.getElementById("noteInput");
+        await fetch("http://localhost:8080/notes",{
+            method: "POST",
+            headers:{
+                "Content-type": "application/json"
+            },
+            body: JSON.stringify({text: input.value})
+        });
+        input.value = "";
+        getNotes();
+    }
+    async function deleteNote(id){
+        await fetch(`http://localhost:8080/notes/${id}`,{
+            method: "DELETE"
+        });
+
+        getNotes();
+    }
+
+    
+</script>
