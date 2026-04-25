@@ -14,13 +14,24 @@
         const list = document.getElementById("notesList");
         list.innerHTML = "";
         data.forEach(note =>{
-            const li = document.createElement("li");
-            li.innerText = `${note.id}: ${note.text}`;
-             const btn = document.createElement("button");
+
+        const editBtn = document.createElement("button");
+        console.log("clicked");
+        editBtn.innerText = "edit";
+
+        editBtn.onclick = () =>{
+            const newText = prompt("Editar nota:");
+            if (newText) updateNote(note.id, newText);
+        }
+        
+        const li = document.createElement("li");
+        li.innerText = `${note.id}: ${note.text}`;
+        const btn = document.createElement("button");
         btn.innerText = "borrar nota";
         btn.onclick = () => deleteNote(note.id);
         li.appendChild(btn);
         list.appendChild(li);
+        li.appendChild(editBtn);
         })
 
        
@@ -29,6 +40,17 @@
         if (data.length === 0){
         list.innerHTML = ("No notes so far");
     }
+    }
+    async function updateNote(id, text) {
+        await fetch(`http://localhost:8080/notes/${id}`, {
+            method: "PUT",
+            headers:{
+                "Content-type" : "application/json"
+            },
+            body: JSON.stringify({ text })
+        });
+        getNotes();
+        
     }
     async function addNote(){
         const input = document.getElementById("noteInput");
